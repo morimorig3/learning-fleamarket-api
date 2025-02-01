@@ -1,6 +1,7 @@
 package services
 
 import (
+	"learning-freemarket-api/dto"
 	"learning-freemarket-api/models"
 	"learning-freemarket-api/repositories"
 )
@@ -8,6 +9,7 @@ import (
 type IItemService interface {
 	FindAll() (*[]models.Item, error)
 	FindByID(itemId uint) (*models.Item, error)
+	Create(createItemInput dto.CreateItemInput) (*models.Item, error)
 }
 
 type ItemService struct {
@@ -28,4 +30,14 @@ func (s *ItemService) FindAll() (*[]models.Item, error) {
 
 func (s *ItemService) FindByID(itemId uint) (*models.Item, error) {
 	return s.repository.FindById(itemId)
+}
+
+func (s *ItemService) Create(createItemInput dto.CreateItemInput) (*models.Item, error) {
+	newItem := models.Item{
+		Name:        createItemInput.Name,
+		Price:       createItemInput.Price,
+		Description: createItemInput.Description,
+		SoldOut:     false,
+	}
+	return s.repository.Create(newItem)
 }
