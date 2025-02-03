@@ -90,3 +90,5 @@ main
 tmp/*
 
 docker
+
+.env
