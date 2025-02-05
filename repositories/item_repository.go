@@ -79,8 +79,12 @@ func (r *ItemRepository) Create(newItem models.Item) (*models.Item, error) {
 }
 
 func (r *ItemRepository) Delete(itemId uint) error {
-	var item models.Item
-	result := r.db.Delete(&item, itemId)
+	deleteItem, err := r.FindById(itemId)
+	if err != nil {
+		return err
+	}
+
+	result := r.db.Delete(&deleteItem)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -100,6 +104,9 @@ func (r *ItemRepository) FindById(itemId uint) (*models.Item, error) {
 	var item models.Item
 	result := r.db.First(&item, itemId)
 	if result.Error != nil {
+		if result.Error.Error() == "record not found" {
+			return nil, errors.New("Item not found")
+		}
 		return nil, result.Error
 	}
 	return &item, nil
