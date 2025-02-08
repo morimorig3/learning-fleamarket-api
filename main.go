@@ -40,5 +40,6 @@ func main() {
 	itemRouter.DELETE("/:id", itemController.Delete)
 
 	authRouter.POST("/signup", authController.SignUp)
+	authRouter.POST("/login", authController.Login)
 	r.Run("localhost:8080")
 }
