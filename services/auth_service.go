@@ -41,21 +41,25 @@ func (s *AuthService) SignUp(email string, password string) error {
 }
 
 func (s *AuthService) Login(email string, password string) (*string, error) {
+	// ユーザーが存在するかどうかチェック
 	foundUser, err := s.repository.FindUser(email)
 	if err != nil {
 		return nil, err
 	}
 
+	// パスワードが正しいかどうかチェック
 	err = bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(password))
 	if err != nil {
 		return nil, err
 	}
 
+	// トークン生成
 	token, err := CreateToken(foundUser.ID, foundUser.Email)
 	if err != nil {
 		return nil, err
 	}
 
+	// ログインは有効期限付きのトークンとステータスコードを返す
 	return token, nil
 }
 

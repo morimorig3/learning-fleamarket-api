@@ -6,10 +6,12 @@ import (
 	"learning-freemarket-api/repositories"
 )
 
+// 商品IDの検索、更新、削除に認証を追加
+
 type IItemService interface {
 	FindAll() (*[]models.Item, error)
 	FindByID(itemId uint) (*models.Item, error)
-	Create(createItemInput dto.CreateItemInput) (*models.Item, error)
+	Create(createItemInput dto.CreateItemInput, userId uint) (*models.Item, error)
 	Update(itemId uint, updateItemInput dto.UpdateItemInput) (*models.Item, error)
 	Delete(itemId uint) error
 }
@@ -34,8 +36,9 @@ func (s *ItemService) FindByID(itemId uint) (*models.Item, error) {
 	return s.repository.FindById(itemId)
 }
 
-func (s *ItemService) Create(createItemInput dto.CreateItemInput) (*models.Item, error) {
+func (s *ItemService) Create(createItemInput dto.CreateItemInput, userId uint) (*models.Item, error) {
 	newItem := models.Item{
+		UserID:      userId,
 		Name:        createItemInput.Name,
 		Price:       createItemInput.Price,
 		Description: createItemInput.Description,

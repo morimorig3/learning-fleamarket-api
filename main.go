@@ -3,6 +3,7 @@ package main
 import (
 	"learning-freemarket-api/controllers"
 	"learning-freemarket-api/infra"
+	"learning-freemarket-api/middlewares"
 
 	// "learning-freemarket-api/models"
 	"learning-freemarket-api/repositories"
@@ -31,11 +32,12 @@ func main() {
 
 	r := gin.Default()
 	itemRouter := r.Group("/items")
+	itemRouterWithAuth := r.Group("/items", middlewares.AuthMiddleware(authService))
 	authRouter := r.Group("/auth")
 
 	itemRouter.GET("", itemController.FindAll)
 	itemRouter.GET("/:id", itemController.FindByID)
-	itemRouter.POST("/", itemController.Create)
+	itemRouterWithAuth.POST("/", itemController.Create)
 	itemRouter.PUT("/:id", itemController.Update)
 	itemRouter.DELETE("/:id", itemController.Delete)
 
