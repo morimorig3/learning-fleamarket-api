@@ -44,17 +44,18 @@ func (c *ItemController) FindAll(ctx *gin.Context) {
 }
 
 func (c *ItemController) FindByID(ctx *gin.Context) {
-	_, exists := ctx.Get("user")
+	user, exists := ctx.Get("user")
 	if !exists {
 		ctx.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
+	userId := user.(*models.User).ID
 	itemId, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Id"})
 		return
 	}
-	item, err := c.service.FindByID(uint(itemId))
+	item, err := c.service.FindByID(uint(itemId), userId)
 	if err != nil {
 		if err.Error() == "Item not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

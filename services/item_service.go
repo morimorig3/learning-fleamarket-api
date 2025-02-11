@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"learning-fleamarket-api/dto"
 	"learning-fleamarket-api/models"
 	"learning-fleamarket-api/repositories"
@@ -9,7 +8,7 @@ import (
 
 type IItemService interface {
 	FindAll() (*[]models.Item, error)
-	FindByID(itemId uint) (*models.Item, error)
+	FindByID(itemId uint, userId uint) (*models.Item, error)
 	Create(createItemInput dto.CreateItemInput, userId uint) (*models.Item, error)
 	Update(itemId uint, updateItemInput dto.UpdateItemInput, userId uint) (*models.Item, error)
 	Delete(itemId uint, userId uint) error
@@ -31,8 +30,8 @@ func (s *ItemService) FindAll() (*[]models.Item, error) {
 	return s.repository.FindAll()
 }
 
-func (s *ItemService) FindByID(itemId uint) (*models.Item, error) {
-	return s.repository.FindById(itemId)
+func (s *ItemService) FindByID(itemId uint, userId uint) (*models.Item, error) {
+	return s.repository.FindById(itemId, userId)
 }
 
 func (s *ItemService) Create(createItemInput dto.CreateItemInput, userId uint) (*models.Item, error) {
@@ -47,12 +46,9 @@ func (s *ItemService) Create(createItemInput dto.CreateItemInput, userId uint) (
 }
 
 func (s *ItemService) Update(itemId uint, updateItemInput dto.UpdateItemInput, userId uint) (*models.Item, error) {
-	targetItem, err := s.FindByID(itemId)
+	targetItem, err := s.FindByID(itemId, userId)
 	if err != nil {
 		return nil, err
-	}
-	if targetItem.UserID != userId {
-		return nil, errors.New("Unauthorized error")
 	}
 
 	if updateItemInput.Name != nil {
@@ -71,12 +67,5 @@ func (s *ItemService) Update(itemId uint, updateItemInput dto.UpdateItemInput, u
 }
 
 func (s *ItemService) Delete(itemId uint, userId uint) error {
-	targetItem, err := s.FindByID(itemId)
-	if err != nil {
-		return err
-	}
-	if targetItem.UserID != userId {
-		return errors.New("Unauthorized error")
-	}
-	return s.repository.Delete(itemId)
+	return s.repository.Delete(itemId, userId)
 }
