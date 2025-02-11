@@ -31,7 +31,7 @@ func SetupDB() *gorm.DB {
 		log.Println("Setup postgresql database")
 	} else {
 		db, err = gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-		log.Println("Setup postgresql database")
+		log.Println("Setup sqlite database")
 	}
 
 	if err != nil {

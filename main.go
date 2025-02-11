@@ -31,7 +31,7 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 
 	itemRouter.GET("", itemController.FindAll)
 	itemRouterWithAuth.GET("/:id", itemController.FindByID)
-	itemRouterWithAuth.POST("/", itemController.Create)
+	itemRouterWithAuth.POST("", itemController.Create)
 	itemRouterWithAuth.PUT("/:id", itemController.Update)
 	itemRouterWithAuth.DELETE("/:id", itemController.Delete)
 
