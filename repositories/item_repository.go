@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"errors"
-	"learning-freemarket-api/models"
+	"learning-fleamarket-api/models"
 
 	"gorm.io/gorm"
 )

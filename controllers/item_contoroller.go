@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"learning-freemarket-api/dto"
-	"learning-freemarket-api/models"
-	"learning-freemarket-api/services"
+	"learning-fleamarket-api/dto"
+	"learning-fleamarket-api/models"
+	"learning-fleamarket-api/services"
 	"net/http"
 	"strconv"
 

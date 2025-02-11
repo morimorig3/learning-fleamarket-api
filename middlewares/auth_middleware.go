@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"learning-freemarket-api/services"
+	"learning-fleamarket-api/services"
 	"net/http"
 	"strings"
 

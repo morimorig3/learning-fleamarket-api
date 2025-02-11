@@ -1,13 +1,13 @@
 package main
 
 import (
-	"learning-freemarket-api/controllers"
-	"learning-freemarket-api/infra"
-	"learning-freemarket-api/middlewares"
+	"learning-fleamarket-api/controllers"
+	"learning-fleamarket-api/infra"
+	"learning-fleamarket-api/middlewares"
 
-	// "learning-freemarket-api/models"
-	"learning-freemarket-api/repositories"
-	"learning-freemarket-api/services"
+	// "learning-fleamarket-api/models"
+	"learning-fleamarket-api/repositories"
+	"learning-fleamarket-api/services"
 
 	"github.com/gin-gonic/gin"
 )

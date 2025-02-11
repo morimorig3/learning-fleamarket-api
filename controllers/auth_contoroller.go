@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"learning-freemarket-api/dto"
-	"learning-freemarket-api/services"
+	"learning-fleamarket-api/dto"
+	"learning-fleamarket-api/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

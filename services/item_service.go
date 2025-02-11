@@ -1,9 +1,9 @@
 package services
 
 import (
-	"learning-freemarket-api/dto"
-	"learning-freemarket-api/models"
-	"learning-freemarket-api/repositories"
+	"learning-fleamarket-api/dto"
+	"learning-fleamarket-api/models"
+	"learning-fleamarket-api/repositories"
 )
 
 // 商品IDの検索、更新、削除に認証を追加

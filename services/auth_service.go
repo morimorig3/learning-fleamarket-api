@@ -2,8 +2,8 @@ package services
 
 import (
 	"fmt"
-	"learning-freemarket-api/models"
-	"learning-freemarket-api/repositories"
+	"learning-fleamarket-api/models"
+	"learning-fleamarket-api/repositories"
 	"os"
 	"time"
 

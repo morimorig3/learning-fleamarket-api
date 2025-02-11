@@ -1,8 +1,8 @@
 package main
 
 import (
-	"learning-freemarket-api/infra"
-	"learning-freemarket-api/models"
+	"learning-fleamarket-api/infra"
+	"learning-fleamarket-api/models"
 )
 
 func main() {
