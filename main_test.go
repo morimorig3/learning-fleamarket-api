@@ -108,3 +108,28 @@ func TestCreate(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, uint(4), res["data"].ID)
 }
+
+func TestCreateUnAuthorized(t *testing.T) {
+	// テストのセットアップ
+	router := setup()
+
+	createItemInput := dto.CreateItemInput{
+		Name:        "テストアイテム4",
+		Price:       4000,
+		Description: "Createテスト",
+	}
+	reqBody, _ := json.Marshal(createItemInput)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/items", bytes.NewBuffer(reqBody))
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// APIの実行結果を取得
+	var res map[string]models.Item
+	json.Unmarshal([]byte(w.Body.String()), &res)
+
+	// アサーション
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+}
