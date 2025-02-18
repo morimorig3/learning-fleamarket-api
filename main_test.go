@@ -106,6 +106,26 @@ func TestFindAll(t *testing.T) {
 }
 
 // 認証が必要なテスト
+func TestFindById(t *testing.T) {
+	// テストのセットアップ
+	router := setup(t)
+	token := login(t, router)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/items/1", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// APIの実行結果を取得
+	var res map[string]models.Item
+	json.Unmarshal([]byte(w.Body.String()), &res)
+
+	// アサーション
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, uint(1), res["data"].ID)
+}
+
 func TestCreate(t *testing.T) {
 	// テストのセットアップ
 	router := setup(t)
@@ -134,7 +154,50 @@ func TestCreate(t *testing.T) {
 	assert.Equal(t, uint(4), res["data"].ID)
 }
 
-func TestCreateUnAuthorized(t *testing.T) {
+func TestUpdate(t *testing.T) {
+	// テストのセットアップ
+	router := setup(t)
+	token := login(t, router)
+
+	updatePrice := uint(9999)
+	updateItemInput := dto.UpdateItemInput{
+		Price: &updatePrice,
+	}
+	reqBody, _ := json.Marshal(updateItemInput)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("PUT", "/items/1", bytes.NewBuffer(reqBody))
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// APIの実行結果を取得
+	var res map[string]models.Item
+	json.Unmarshal([]byte(w.Body.String()), &res)
+
+	// アサーション
+	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.Equal(t, uint(9999), res["data"].Price)
+}
+
+func TestDelete(t *testing.T) {
+	// テストのセットアップ
+	router := setup(t)
+	token := login(t, router)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("DELETE", "/items/1", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// アサーション
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestUnAuthorized(t *testing.T) {
 	// テストのセットアップ
 	router := setup(t)
 
