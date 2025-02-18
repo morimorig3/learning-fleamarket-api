@@ -6,7 +6,6 @@ import (
 	"learning-fleamarket-api/dto"
 	"learning-fleamarket-api/infra"
 	"learning-fleamarket-api/models"
-	"learning-fleamarket-api/services"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -64,6 +63,29 @@ func setup(t *testing.T) *gin.Engine {
 	return router
 }
 
+func login(t *testing.T, router *gin.Engine) string {
+	loginInput := dto.LoginInput{
+		Email:    "test1@example.com",
+		Password: "test1pass",
+	}
+	reqBody, err := json.Marshal(loginInput)
+	assert.Equal(t, err, nil)
+	w := httptest.NewRecorder()
+	req, err := http.NewRequest("POST", "/auth/login", bytes.NewBuffer(reqBody))
+	assert.Equal(t, err, nil)
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// 実行結果の確認
+	var res map[string]string
+	json.Unmarshal([]byte(w.Body.String()), &res)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	return res["token"]
+}
+
 func TestFindAll(t *testing.T) {
 	// テストのセットアップ
 	router := setup(t)
@@ -87,8 +109,7 @@ func TestFindAll(t *testing.T) {
 func TestCreate(t *testing.T) {
 	// テストのセットアップ
 	router := setup(t)
-	token, err := services.CreateToken(1, "test1@example.com")
-	assert.Equal(t, nil, err)
+	token := login(t, router)
 
 	createItemInput := dto.CreateItemInput{
 		Name:        "テストアイテム4",
@@ -99,7 +120,7 @@ func TestCreate(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/items", bytes.NewBuffer(reqBody))
-	req.Header.Set("Authorization", "Bearer "+*token)
+	req.Header.Set("Authorization", "Bearer "+token)
 
 	// APIリクエストの実行
 	router.ServeHTTP(w, req)
@@ -164,7 +185,6 @@ func TestLogin(t *testing.T) {
 	reqBody, _ := json.Marshal(loginInput)
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/auth/login", bytes.NewBuffer(reqBody))
-	router.ServeHTTP(w, req)
 
 	// APIリクエストの実行
 	router.ServeHTTP(w, req)
