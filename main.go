@@ -5,7 +5,6 @@ import (
 	"learning-fleamarket-api/infra"
 	"learning-fleamarket-api/middlewares"
 
-	// "learning-fleamarket-api/models"
 	"learning-fleamarket-api/repositories"
 	"learning-fleamarket-api/services"
 

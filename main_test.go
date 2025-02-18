@@ -133,3 +133,21 @@ func TestCreateUnAuthorized(t *testing.T) {
 	// アサーション
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
+
+func TestSignUp(t *testing.T) {
+	router := setup()
+	signUpInput := dto.SignUpInput{
+		Email:    "test3@example.com",
+		Password: "test3pass",
+	}
+	reqBody, _ := json.Marshal(signUpInput)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/auth/signup", bytes.NewBuffer(reqBody))
+	router.ServeHTTP(w, req)
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// 実行結果の確認
+	assert.Equal(t, http.StatusCreated, w.Code)
+}
