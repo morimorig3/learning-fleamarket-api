@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func setupTestData(db *gorm.DB) {
+func setupTestData(t *testing.T, db *gorm.DB, router *gin.Engine) {
 	items := []models.Item{
 		{Name: "テストアイテム1", Price: 1000, Description: "", SoldOut: false, UserID: 1},
 		{Name: "テストアイテム2", Price: 2000, Description: "テスト2", SoldOut: true, UserID: 2},
@@ -42,7 +42,11 @@ func setupTestData(db *gorm.DB) {
 
 	// DBに登録
 	for _, user := range users {
-		db.Create(&user)
+		reqBody, _ := json.Marshal(user)
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("POST", "/auth/signup", bytes.NewBuffer(reqBody))
+		router.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusCreated, w.Code)
 	}
 	for _, item := range items {
 		db.Create(&item)
@@ -50,19 +54,19 @@ func setupTestData(db *gorm.DB) {
 }
 
 // 各テストでsetup関数を呼び出すことでどのテストでも同じ初期データを使用することができる
-func setup() *gin.Engine {
+func setup(t *testing.T) *gin.Engine {
 	db := infra.SetupDB()
 	// DBにテーブル作成
 	db.AutoMigrate(&models.Item{}, &models.User{})
-
-	setupTestData(db)
 	router := setupRouter(db)
+
+	setupTestData(t, db, router)
 	return router
 }
 
 func TestFindAll(t *testing.T) {
 	// テストのセットアップ
-	router := setup()
+	router := setup(t)
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/items", nil)
@@ -82,7 +86,7 @@ func TestFindAll(t *testing.T) {
 // 認証が必要なテスト
 func TestCreate(t *testing.T) {
 	// テストのセットアップ
-	router := setup()
+	router := setup(t)
 	token, err := services.CreateToken(1, "test1@example.com")
 	assert.Equal(t, nil, err)
 
@@ -111,7 +115,7 @@ func TestCreate(t *testing.T) {
 
 func TestCreateUnAuthorized(t *testing.T) {
 	// テストのセットアップ
-	router := setup()
+	router := setup(t)
 
 	createItemInput := dto.CreateItemInput{
 		Name:        "テストアイテム4",
@@ -135,7 +139,7 @@ func TestCreateUnAuthorized(t *testing.T) {
 }
 
 func TestSignUp(t *testing.T) {
-	router := setup()
+	router := setup(t)
 	signUpInput := dto.SignUpInput{
 		Email:    "test3@example.com",
 		Password: "test3pass",
@@ -143,11 +147,28 @@ func TestSignUp(t *testing.T) {
 	reqBody, _ := json.Marshal(signUpInput)
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/auth/signup", bytes.NewBuffer(reqBody))
-	router.ServeHTTP(w, req)
 
 	// APIリクエストの実行
 	router.ServeHTTP(w, req)
 
 	// 実行結果の確認
 	assert.Equal(t, http.StatusCreated, w.Code)
+}
+
+func TestLogin(t *testing.T) {
+	router := setup(t)
+	loginInput := dto.LoginInput{
+		Email:    "test2@example.com",
+		Password: "test2pass",
+	}
+	reqBody, _ := json.Marshal(loginInput)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/auth/login", bytes.NewBuffer(reqBody))
+	router.ServeHTTP(w, req)
+
+	// APIリクエストの実行
+	router.ServeHTTP(w, req)
+
+	// 実行結果の確認
+	assert.Equal(t, http.StatusOK, w.Code)
 }
