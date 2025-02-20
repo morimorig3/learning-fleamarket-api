@@ -8,6 +8,7 @@ golang, gin, gorm, postgresql
 
 ## 実装すること
 
+- テスト作成
 - 同時アクセスによるデータ不整合が起こらないよう排他制御をする
 - 特定のドメインからしかアクセスされないようCORS設定を行う
 
@@ -27,8 +28,11 @@ golang, gin, gorm, postgresql
 |GET|`/items/:id`|商品を取得する||
 |PUT|`/items/:id`|商品を更新する||
 |DELETE|`/items/:id`|商品を削除する||
-|GET|`/auth/user`|ユーザー情報を取得する|未実装|
-|POST|`/auth/user`|ユーザーを登録する|`/auth/signin`で実装済み|
-|DELETE|`/auth/user`|ユーザーを削除する|未実装|
+|POST|`/auth/signin`|ユーザーを登録する||
 |POST|`/auth/login`|ログインする||
-|POST|`/auth/logout`|ログアウトする|未実装|
+|GET|`/orders`|注文履歴を取得する||
+|POST|`/orders/:id`|注文する||
+
+## トランザクション管理が必要な処理
+
+注文する処理
